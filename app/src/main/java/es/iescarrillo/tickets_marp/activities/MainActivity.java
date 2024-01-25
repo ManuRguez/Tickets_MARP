@@ -2,8 +2,10 @@ package es.iescarrillo.tickets_marp.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ListView;
 
 import java.util.List;
@@ -12,6 +14,7 @@ import es.iescarrillo.tickets_marp.R;
 import es.iescarrillo.tickets_marp.adapters.TicketsAdapter;
 import es.iescarrillo.tickets_marp.apiClients.GoldenRaceApiClient;
 import es.iescarrillo.tickets_marp.apiServices.GoldenRaceApiService;
+import es.iescarrillo.tickets_marp.models.DetailsTicket;
 import es.iescarrillo.tickets_marp.models.Ticket;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -23,6 +26,9 @@ public class MainActivity extends AppCompatActivity {
 
     TicketsAdapter ticketsAdapter;
 
+    Button btnAgregar;
+    Ticket ticket;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
 
         GoldenRaceApiService goldenRaceApiService = GoldenRaceApiClient.getClient().create(GoldenRaceApiService.class);
 
+        lvTicket = findViewById(R.id.lvTicket);
+        btnAgregar = findViewById(R.id.btnAgregar);
         Call<List<Ticket>> call = goldenRaceApiService.getTickets();
 
         call.enqueue(new Callback<List<Ticket>>() {
@@ -42,9 +50,9 @@ public class MainActivity extends AppCompatActivity {
 
                 ticketsAdapter = new TicketsAdapter(getApplicationContext(),list);
 
-                lvTicket = findViewById(R.id.lvTicket);
-
                 lvTicket.setAdapter(ticketsAdapter);
+
+
             }
 
             @Override
@@ -53,6 +61,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+        lvTicket.setOnItemClickListener((parent, view, position, id) -> {
+            Ticket selectecTicket = (Ticket) parent.getItemAtPosition(position);
+
+            Intent intent = new Intent(getApplicationContext(), DetailsTicket2.class);
+
+            intent.putExtra("ticket", selectecTicket);
+
+            startActivity(intent);
+        });
+
+
+        btnAgregar.setOnClickListener( v -> {
+            Intent intent = new Intent(this, InsertTicket.class);
+            intent.putExtra("ticket", ticket);
+            startActivity(intent);
+        });
 
     }
 }
