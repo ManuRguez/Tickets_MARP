@@ -23,7 +23,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class DetailsTicket2 extends AppCompatActivity {
-    Button btnEdit,btnDelete;
+    Button btnEdit,btnDelete,btnInsertar,btnBack2;
     Ticket ticket;
 
     ListView lvDetailsTickets;
@@ -37,7 +37,8 @@ public class DetailsTicket2 extends AppCompatActivity {
         setContentView(R.layout.activity_details_ticket2);
 
 
-
+        btnInsertar = findViewById(R.id.btnInsertar);
+        btnBack2 = findViewById(R.id.btnback2);
         btnEdit=findViewById(R.id.btnEdit);
         btnDelete = findViewById(R.id.btnDelete);
 
@@ -88,6 +89,7 @@ public class DetailsTicket2 extends AppCompatActivity {
                 }
             });
             Intent back = new Intent(getApplicationContext(), MainActivity.class);
+            back.putExtra("ticket", ticket);
             startActivity(back);
 
 
@@ -110,7 +112,24 @@ public class DetailsTicket2 extends AppCompatActivity {
             }
         });
 
+        btnInsertar.setOnClickListener(v -> {
+            Intent insert = new Intent(getApplicationContext(), InsertDetails.class);
+            insert.putExtra("ticket",ticket);
+            startActivity(insert);
+        });
 
+        btnBack2.setOnClickListener(v -> onBackPressed());
+
+
+        lvDetailsTickets.setOnItemClickListener((parent, view, position, id) -> {
+
+            DetailsTicket selectedDetailsTicket = (DetailsTicket) parent.getItemAtPosition(position);
+            selectedDetailsTicket.setTicket(ticket);
+
+            Intent intent = new Intent(getApplicationContext(), EditDetails.class);
+            intent.putExtra("detailsTicket",selectedDetailsTicket);
+            startActivity(intent);
+        });
 
 
 

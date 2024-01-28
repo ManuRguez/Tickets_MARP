@@ -15,6 +15,12 @@
         android:theme="@style/Theme.Tickets_MARP"
         tools:targetApi="31">
         <activity
+            android:name=".activities.EditDetails"
+            android:exported="false" />
+        <activity
+            android:name=".activities.InsertDetails"
+            android:exported="false" />
+        <activity
             android:name=".activities.EditTicket"
             android:exported="false" />
         <activity

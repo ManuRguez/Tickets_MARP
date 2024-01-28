@@ -55,7 +55,6 @@ public class DetailsTicket implements Serializable {
         this.ticket = ticket;
     }
 
-
     @Override
     public String toString() {
         return "DetailsTicket{" +

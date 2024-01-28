@@ -67,6 +67,7 @@ public class EditTicket extends AppCompatActivity {
                 }
             });
             Intent back = new Intent(getApplicationContext(), MainActivity.class);
+            back.putExtra("ticket",ticket);
             startActivity(back);
         });
 
