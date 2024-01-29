@@ -22,6 +22,7 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
+    //Declaracion de los componentes
     ListView lvTicket;
 
     TicketsAdapter ticketsAdapter;
@@ -36,12 +37,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Recupramos los datos del intent
         Intent intent2 = getIntent();
 
+        //Declacion del servicio
         GoldenRaceApiService goldenRaceApiService = GoldenRaceApiClient.getClient().create(GoldenRaceApiService.class);
 
+
+        //Inicializacion de los componentes
         lvTicket = findViewById(R.id.lvTicket);
         btnAgregar = findViewById(R.id.btnAgregar);
+
+        //Llamada al servicio
         Call<List<Ticket>> call = goldenRaceApiService.getTickets();
         call.enqueue(new Callback<List<Ticket>>() {
             @Override
@@ -67,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
+        //Aqui ponemos que cuando se haga clic en un elemento de la lista nos lleve a la activity de DetailsTicket2 y nos llevamos el objeto Ticket para recuperarlo alli
         lvTicket.setOnItemClickListener((parent, view, position, id) -> {
             Ticket selectecTicket = (Ticket) parent.getItemAtPosition(position);
 
@@ -79,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        //Este boton de agregar nos lleva a la pantalla de InserTicket para poder introducir Tickets
         btnAgregar.setOnClickListener( v -> {
             Intent intent = new Intent(this, InsertTicket.class);
             intent.putExtra("ticket", ticket);

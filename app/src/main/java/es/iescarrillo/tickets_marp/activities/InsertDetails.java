@@ -24,6 +24,7 @@ import retrofit2.Response;
 
 public class InsertDetails extends AppCompatActivity {
 
+    //Declaracion de los componentes
     private Button btnAddDetails, btnCancelDetails;
 
     private EditText etPrecioDetails, etDescriptionDetails;
@@ -40,6 +41,7 @@ public class InsertDetails extends AppCompatActivity {
         setContentView(R.layout.activity_insert_details);
 
 
+        //Recuperamos datos del intent
       Intent intent = getIntent();
 
       ticket = new Ticket();
@@ -47,21 +49,30 @@ public class InsertDetails extends AppCompatActivity {
           ticket = (Ticket) intent.getSerializableExtra("ticket");
       }
 
+
+      //Inicializacion de los componentes
         etPrecioDetails = findViewById(R.id.etPrecioDetails);
         etDescriptionDetails = findViewById(R.id.etDescriptionDetails);
         btnAddDetails = findViewById(R.id.btnAddDetails);
         btnCancelDetails = findViewById(R.id.btnCancelDetails);
 
+
+        //DEclaracion del servicio
         GoldenRaceApiService apiService = GoldenRaceApiClient.getClient().create(GoldenRaceApiService.class);
 
+
+        //Bototn de  Insetar detalles de los ticket
         btnAddDetails.setOnClickListener(v -> {
 
+            //Aqui creamos una instancia de DetailsTicket y le introducimos los datos
             DetailsTicket newDetailsTicket = new DetailsTicket();
             newDetailsTicket.setTicket(ticket);
             newDetailsTicket.setAmount(Double.parseDouble(etPrecioDetails.getText().toString()));
             newDetailsTicket.setDescription(etDescriptionDetails.getText().toString());
             newDetailsTicket.setId(0);
 
+
+            //Llamada al servicio
             Call details = apiService.postDetail(newDetailsTicket);
 
             details.enqueue(new Callback<DetailsTicket>() {
@@ -84,12 +95,14 @@ public class InsertDetails extends AppCompatActivity {
                 }
             });
 
+            //Inteint que cuando se realiza esta inserccion de datos nos devuelve a DetailsATicket2
             Intent back = new Intent(getApplicationContext(), DetailsTicket2.class);
             back.putExtra("ticket", ticket);
             back.putExtra("detailsTickets", detailsTicket );
             startActivity(back);
         });
 
+        //Boton de cancelar que te devuelve a la activity anterior
         btnCancelDetails.setOnClickListener(v -> onBackPressed());
     }
 }

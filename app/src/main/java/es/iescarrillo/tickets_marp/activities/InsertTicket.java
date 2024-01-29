@@ -22,6 +22,7 @@ import retrofit2.Response;
 
 public class InsertTicket extends AppCompatActivity {
 
+    //Declaracion de componentes
     EditText etPrecio;
     Button  btnAdd,btnCancel;
     DetailsTicket2 detailsTicket2;
@@ -31,15 +32,22 @@ public class InsertTicket extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_insert_ticket);
 
+
+        //Inicializacion de componentes
         etPrecio = findViewById(R.id.etPrecio);
         btnAdd =findViewById(R.id.btnAdd);
         btnCancel = findViewById(R.id.btnCancel);
 
+
+        //Llamada al servicio
         GoldenRaceApiService apiService = GoldenRaceApiClient.getClient().create(GoldenRaceApiService.class);
 
+
+        //Creacion de un Ticket
         Ticket ticket = new Ticket();
 
 
+        //Creamos una variable LocalDatetime para y le damos el formato necesario y se lo introducimos para que asi no de error
          LocalDateTime now = LocalDateTime.now();
 
         String pattern = "dd/MM/yyyy HH:mm:ss";
@@ -47,14 +55,19 @@ public class InsertTicket extends AppCompatActivity {
 
         String formatedDate = now.format(formatter);
 
+
+        //Este boton inserta Ticket en la Api
         btnAdd.setOnClickListener(v -> {
 
+            //Setemos Id a 0, le pasamos la fecha formateada, y el total amount lo seteamos al EditText
             ticket.setId(0);
             ticket.setTotalAmount(Double.parseDouble(etPrecio.getText().toString()));
 
 
             ticket.setCreationDate(formatedDate);
 
+
+            //Llamada al servicio
             Call<Ticket> call = apiService.postTicket(ticket);
 
 
@@ -76,11 +89,14 @@ public class InsertTicket extends AppCompatActivity {
                 }
             });
 
+            //Intent que cuando se añade el Tikcet nos dirigie a la Main Activity
             Intent back = new Intent(getApplicationContext(), MainActivity.class);
             back.putExtra("ticket",ticket);
             startActivity(back);
         });
 
+
+        //Boton de cancelar que nos llevara a la MainActivity y no se llevará a cabo la inserción
         btnCancel.setOnClickListener(v -> {
             Intent back2 = new Intent(getApplicationContext(), MainActivity.class);
             back2.putExtra("ticket", ticket);

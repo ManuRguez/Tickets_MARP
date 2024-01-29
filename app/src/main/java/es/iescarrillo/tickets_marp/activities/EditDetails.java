@@ -22,6 +22,8 @@ import retrofit2.Response;
 
 public class EditDetails extends AppCompatActivity {
 
+
+    //Declaracion de los componentes
     DetailsTicket detailsTicket;
 
     EditText etDescriptionDetails, etAmountDetails;
@@ -39,6 +41,8 @@ public class EditDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_details);
 
+
+        //Recuperamos los datos del intent tanto de los detalles y de los ticket
         Intent intent = getIntent();
 
         detailsTicket = new DetailsTicket();
@@ -51,6 +55,7 @@ public class EditDetails extends AppCompatActivity {
             ticket = (Ticket) intent.getSerializableExtra("ticket");
         }
 
+        //Inicializacion de los componentes
         btnSaveDetails = findViewById(R.id.btnSaveDetails);
         btnBackDetails = findViewById(R.id.btnBackDetails);
         btnDeleteDetails = findViewById(R.id.btnDeleteDEtails);
@@ -59,20 +64,22 @@ public class EditDetails extends AppCompatActivity {
         tvID = findViewById(R.id.tvEditDetailsId);
 
         Log.i("DetailsTicket", detailsTicket.toString());
+
+        //Setamos los atributos introducimos un TextView que no se pueda modificar y dos Editque son los atributos que vamos  poder modificar
         tvID.setText(String.valueOf(detailsTicket.getId()));
         etDescriptionDetails.setText((detailsTicket.getDescription().toString()));
         etAmountDetails.setText(String.valueOf(detailsTicket.getAmount()).toString());
 
-// newDetailsTicket.setAmount(Double.parseDouble(etPrecioDetails.getText().toString()));
 
-
+        //Declaracion del servicio
         GoldenRaceApiService apiService = GoldenRaceApiClient.getClient().create(GoldenRaceApiService.class);
 
+        //Le damos funcionalidad al boton de Guardar  este boton guarda la edicion de los detalles de los Tickets
         btnSaveDetails.setOnClickListener(v -> {
             detailsTicket.setAmount(Double.valueOf(etAmountDetails.getText().toString()));
             detailsTicket.setDescription(etDescriptionDetails.getText().toString());
 
-
+            //Llamada al servicio de Update Details
             Call <DetailsTicket>updateDetails = apiService.updateDetail(detailsTicket.getId(),detailsTicket);
 
 
@@ -89,16 +96,21 @@ public class EditDetails extends AppCompatActivity {
 
                 }
             });
+
+            //Intent que al realizar la modificación y te devuelve a la pantalla de DetailsTicket2
             Intent back = new Intent(getApplicationContext(), DetailsTicket2.class);
             back.putExtra("ticket",ticket);
             back.putExtra("detailsTicket", detailsTicket);
             startActivity(back);
         });
 
+        //Boton de volver que te lleva a la pantalla de la que volvemos
         btnBackDetails.setOnClickListener(v -> onBackPressed());
 
+        //Boton de borrar detalles de los Tickets
         btnDeleteDetails.setOnClickListener(v -> {
 
+            //Llamada al servicio
             Call delete = apiService.deleteDetail(detailsTicket.getId());
 
             delete.enqueue(new Callback<DetailsTicket>() {
@@ -107,8 +119,6 @@ public class EditDetails extends AppCompatActivity {
                     if (response.isSuccessful()) {
                         DetailsTicket details = response.body();
                         Toast.makeText(getApplicationContext(), "Detalle eliminado correctamente", Toast.LENGTH_SHORT).show();
-
-                       // updateTotalAmount();
 
                     } else {
                         Log.i("Ticket Error", "Error al cargar el detalle del ticket");
@@ -121,6 +131,8 @@ public class EditDetails extends AppCompatActivity {
                 }
             });
 
+
+            //Intent que una vez que realizas el borrado te lleva hacia la vetnana DetailsTicket2
             Intent back22 = new Intent(getApplicationContext(), DetailsTicket2.class);
             back22.putExtra("ticket",ticket);
             back22.putExtra("detailsTicket", detailsTicket);

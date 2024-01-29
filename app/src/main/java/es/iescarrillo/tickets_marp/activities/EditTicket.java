@@ -21,6 +21,8 @@ import retrofit2.Response;
 
 public class EditTicket extends AppCompatActivity {
 
+
+    //Declaracion de componentes
     Button btnBack,btnSave;
 
     DetailsTicket2 detailsTicket2;
@@ -30,24 +32,36 @@ public class EditTicket extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_ticket);
 
+
+        //Recuperamos datos del intent
         Ticket ticket = (Ticket) getIntent().getSerializableExtra("ticket");
 
+
+        //Inicializacion de Componentes
         btnSave = findViewById(R.id.btnSave);
         btnBack = findViewById(R.id.btnBack);
         TextView tvDetailsId = findViewById(R.id.tvDetailsId);
         TextView tvDescription = findViewById(R.id.tvDescription);
          EditText etamount = findViewById(R.id.etAmount);
 
+
+         //Introducimos los datos a los tv que se le corresponden
         tvDetailsId.setText(ticket.getId().toString());
         tvDescription.setText(ticket.getCreationDate().toString());
 
-
+        //Declaracion del Service
         GoldenRaceApiService apiService = GoldenRaceApiClient.getClient().create(GoldenRaceApiService.class);
 
+
+        //Boton que al hacer clic se realizan los cambiamos en la modificacion de los tickets
         btnSave.setOnClickListener(v -> {
 
+
+            //Le setamos al ticket el totalAMount con la cantidad nueva modificada
             ticket.setTotalAmount(Double.parseDouble(etamount.getText().toString()));
 
+
+            //Llamada al servicio
             Call editTicket = apiService.updateTicket(ticket.getId(), ticket);
 
 
@@ -68,6 +82,8 @@ public class EditTicket extends AppCompatActivity {
 
                 }
             });
+
+            //intent que una vez realizada la modificadcion te lleva a la MainActivity
             Intent back = new Intent(getApplicationContext(), MainActivity.class);
             back.putExtra("ticket",ticket);
             startActivity(back);

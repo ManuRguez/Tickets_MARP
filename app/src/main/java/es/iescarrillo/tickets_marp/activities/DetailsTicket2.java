@@ -24,6 +24,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class DetailsTicket2 extends AppCompatActivity {
+
+    //Declaramos componentes
     Button btnEdit,btnDelete,btnInsertar,btnBack2;
     Ticket ticket;
 
@@ -44,38 +46,49 @@ public class DetailsTicket2 extends AppCompatActivity {
         setContentView(R.layout.activity_details_ticket2);
 
 
+        //Inicializamos componentes
         btnInsertar = findViewById(R.id.btnInsertar);
         btnBack2 = findViewById(R.id.btnback2);
         btnEdit=findViewById(R.id.btnEdit);
         btnDelete = findViewById(R.id.btnDelete);
         lvDetailsTickets = findViewById(R.id.lvDetailsTickets);
 
+
+        //Recuperamos datos del intent
          ticket = (Ticket) getIntent().getSerializableExtra("ticket");
+
+         //Creamos un objeto de DetailsTicket
         DetailsTicket detailsTicket = new DetailsTicket();
 
-
+        //Incializacion de componentes
         TextView tvDetailsId = findViewById(R.id.tvDetailsId);
         TextView tvDescription = findViewById(R.id.tvDescription);
         tvAmount = findViewById(R.id.tvAmount);
 
+        //Comprobamos que el ticket es distinto de nulo y le guardamos los datos en sus respectivos campos
         if (ticket != null) {
             tvDetailsId.setText(String.valueOf(ticket.getId()));
             tvDescription.setText(String.valueOf(ticket.getCreationDate()));
             tvAmount.setText(String.valueOf(ticket.getTotalAmount()));
         }
 
+
+        //Declaramos un arraylist
         details = new ArrayList<>();
 
 
-
+        //Boton de editar al que el que nos llevará a la clase de EditTicket
         btnEdit.setOnClickListener(v -> {
             Intent intent = new Intent(getApplicationContext(), EditTicket.class);
             intent.putExtra("ticket", ticket);
             startActivity(intent);
         });
 
+        //Boton de eliminar Ticket que al hacer clic elimina el ticket de la api y una vez eliminado volvera a la MainActivity
         btnDelete.setOnClickListener(v -> {
 
+
+            //Llamada al servicicio
             Call<Void> call = apiService.deleteTicket(ticket.getId());
 
             call.enqueue(new Callback<Void>() {
@@ -84,6 +97,7 @@ public class DetailsTicket2 extends AppCompatActivity {
                     if(response.isSuccessful()){
                         Void deleteTicket = response.body();
 
+                        //Toast informativo para el usuario
                         Toast.makeText(getApplicationContext(), "Ticket eliminado correctamente", Toast.LENGTH_SHORT).show();
 
 
@@ -97,6 +111,8 @@ public class DetailsTicket2 extends AppCompatActivity {
 
                 }
             });
+
+            //Intent para una vez que se elimine el Ticket retroceda hacia la pantalla principal, llevadonos el objeto ticket ya que si no da errores
             Intent back = new Intent(getApplicationContext(), MainActivity.class);
             back.putExtra("ticket", ticket);
             startActivity(back);
@@ -104,10 +120,17 @@ public class DetailsTicket2 extends AppCompatActivity {
 
         });
 
-        //Detalles de los detalles
+
+        //Aqui vamos a cargar los detalles de los ticket
+
+        //Declaramos adaptador
         adapter = new DetailsTicketsAdapter(getApplicationContext(),details);
+
+        //Declaramos servicio
         apiService = GoldenRaceApiClient.getClient().create(GoldenRaceApiService.class);
 
+
+        //Llamada al servicio
         Call call2 = apiService.getDetails(ticket.getId());
 
 
@@ -115,6 +138,7 @@ public class DetailsTicket2 extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) {
 
+                //Aqui introducirmos un if cargando los datos en un arrayList en el que lo recorre y actualizamos los precios.
                 if(response.isSuccessful()){
                     ArrayList<DetailsTicket> detailsList = (ArrayList<DetailsTicket>) response.body();
 
@@ -135,12 +159,14 @@ public class DetailsTicket2 extends AppCompatActivity {
             }
         });
 
+        //Funcionalidad al boton de insertar que nos llevará a la activity de InsertDetails para insertar Detalles de los ticket
         btnInsertar.setOnClickListener(v -> {
             Intent insert = new Intent(getApplicationContext(), InsertDetails.class);
             insert.putExtra("ticket",ticket);
             startActivity(insert);
         });
 
+        //Boton de volver que volvera a la MainActivity
         btnBack2.setOnClickListener(v -> {
             Intent volver2 = new Intent(getApplicationContext(), MainActivity.class);
             volver2.putExtra("ticket", ticket);
@@ -149,6 +175,8 @@ public class DetailsTicket2 extends AppCompatActivity {
         });
 
 
+
+        //ListView que mostrará todos los detalles de los ticket
         lvDetailsTickets.setOnItemClickListener((parent, view, position, id) -> {
 
             DetailsTicket selectedDetailsTicket = (DetailsTicket) parent.getItemAtPosition(position);
@@ -162,6 +190,8 @@ public class DetailsTicket2 extends AppCompatActivity {
 
     }
 
+
+    //Metodo que suma todos los amount de los detalles de los ticket y modifica el atributo totalAmount de los Ticket a la suma total de estos
 
     public void calcularTotalAmoun(){
         double Amount = 0.0;
