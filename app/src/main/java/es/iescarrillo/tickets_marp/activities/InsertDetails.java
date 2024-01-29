@@ -29,8 +29,10 @@ public class InsertDetails extends AppCompatActivity {
     private EditText etPrecioDetails, etDescriptionDetails;
 
     private Ticket ticket;
+    DetailsTicket detailsTicket = new DetailsTicket();
 
-    private DetailsTicket detailsTicket;
+
+    private DetailsTicket2 detailsTicket2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +58,7 @@ public class InsertDetails extends AppCompatActivity {
 
             DetailsTicket newDetailsTicket = new DetailsTicket();
             newDetailsTicket.setTicket(ticket);
-            newDetailsTicket.setAmount(Double.valueOf(etPrecioDetails.getText().toString()));
+            newDetailsTicket.setAmount(Double.parseDouble(etPrecioDetails.getText().toString()));
             newDetailsTicket.setDescription(etDescriptionDetails.getText().toString());
             newDetailsTicket.setId(0);
 
@@ -68,7 +70,9 @@ public class InsertDetails extends AppCompatActivity {
                     if (response.isSuccessful()) {
                         DetailsTicket details = response.body();
                         Log.i("Successful ticket loaded", details.toString());
+                       // detailsTicket2.updateTotalAmount();
                         Toast.makeText(getApplicationContext(), "Detalle añadido correctamente", Toast.LENGTH_SHORT).show();
+
                     } else {
                         Log.i("Ticket Error", "Error al cargar el detalle del ticket");
                     }
@@ -82,6 +86,7 @@ public class InsertDetails extends AppCompatActivity {
 
             Intent back = new Intent(getApplicationContext(), DetailsTicket2.class);
             back.putExtra("ticket", ticket);
+            back.putExtra("detailsTickets", detailsTicket );
             startActivity(back);
         });
 

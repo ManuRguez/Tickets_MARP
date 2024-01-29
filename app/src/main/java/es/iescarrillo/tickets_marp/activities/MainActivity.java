@@ -29,17 +29,20 @@ public class MainActivity extends AppCompatActivity {
     Button btnAgregar;
     Ticket ticket;
 
+    DetailsTicket2 detailsTicket2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Intent intent2 = getIntent();
 
         GoldenRaceApiService goldenRaceApiService = GoldenRaceApiClient.getClient().create(GoldenRaceApiService.class);
 
         lvTicket = findViewById(R.id.lvTicket);
         btnAgregar = findViewById(R.id.btnAgregar);
         Call<List<Ticket>> call = goldenRaceApiService.getTickets();
-
         call.enqueue(new Callback<List<Ticket>>() {
             @Override
             public void onResponse(Call<List<Ticket>> call, Response<List<Ticket>> response) {
@@ -50,7 +53,10 @@ public class MainActivity extends AppCompatActivity {
 
                 ticketsAdapter = new TicketsAdapter(getApplicationContext(),list);
 
+
+
                 lvTicket.setAdapter(ticketsAdapter);
+
 
 
             }
@@ -78,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("ticket", ticket);
             startActivity(intent);
         });
+
+
 
     }
 }

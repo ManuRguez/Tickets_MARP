@@ -10,6 +10,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import es.iescarrillo.tickets_marp.R;
@@ -26,9 +27,15 @@ public class DetailsTicket2 extends AppCompatActivity {
     Button btnEdit,btnDelete,btnInsertar,btnBack2;
     Ticket ticket;
 
+    private ArrayList<DetailsTicket> details;
     ListView lvDetailsTickets;
 
     DetailsTicketsAdapter adapter;
+
+    GoldenRaceApiService apiService;
+    TextView tvAmount;
+
+
 
 
     @Override
@@ -41,24 +48,24 @@ public class DetailsTicket2 extends AppCompatActivity {
         btnBack2 = findViewById(R.id.btnback2);
         btnEdit=findViewById(R.id.btnEdit);
         btnDelete = findViewById(R.id.btnDelete);
+        lvDetailsTickets = findViewById(R.id.lvDetailsTickets);
 
-        Ticket ticket = (Ticket) getIntent().getSerializableExtra("ticket");
+         ticket = (Ticket) getIntent().getSerializableExtra("ticket");
         DetailsTicket detailsTicket = new DetailsTicket();
 
 
         TextView tvDetailsId = findViewById(R.id.tvDetailsId);
         TextView tvDescription = findViewById(R.id.tvDescription);
-        TextView tvAmount = findViewById(R.id.tvAmount);
+        tvAmount = findViewById(R.id.tvAmount);
 
-        tvDetailsId.setText(ticket.getId().toString());
-        tvDescription.setText(ticket.getCreationDate().toString());
-        tvAmount.setText(ticket.getTotalAmount().toString());
+        if (ticket != null) {
+            tvDetailsId.setText(String.valueOf(ticket.getId()));
+            tvDescription.setText(String.valueOf(ticket.getCreationDate()));
+            tvAmount.setText(String.valueOf(ticket.getTotalAmount()));
+        }
 
+        details = new ArrayList<>();
 
-        //Detalles de los detalles
-        GoldenRaceApiService apiService = GoldenRaceApiClient.getClient().create(GoldenRaceApiService.class);
-        Call<List<DetailsTicket>> call2 = apiService.getDetails(ticket.getId());
-        lvDetailsTickets = findViewById(R.id.lvDetailsTickets);
 
 
         btnEdit.setOnClickListener(v -> {
@@ -78,6 +85,8 @@ public class DetailsTicket2 extends AppCompatActivity {
                         Void deleteTicket = response.body();
 
                         Toast.makeText(getApplicationContext(), "Ticket eliminado correctamente", Toast.LENGTH_SHORT).show();
+
+
                     }else{
                         Log.i("Ticket Error", "Error to upload Ticket");
                     }
@@ -95,19 +104,33 @@ public class DetailsTicket2 extends AppCompatActivity {
 
         });
 
-        call2.enqueue(new Callback<List<DetailsTicket>>() {
+        //Detalles de los detalles
+        adapter = new DetailsTicketsAdapter(getApplicationContext(),details);
+        apiService = GoldenRaceApiClient.getClient().create(GoldenRaceApiService.class);
+
+        Call call2 = apiService.getDetails(ticket.getId());
+
+
+        call2.enqueue(new Callback() {
             @Override
-            public void onResponse(Call<List<DetailsTicket>> call, Response<List<DetailsTicket>> response) {
-                List<DetailsTicket> listDetails = response.body();
-                Log.i("DetailsTicket",listDetails.toString());
+            public void onResponse(Call call, Response response) {
 
-                adapter = new DetailsTicketsAdapter(getApplicationContext(),listDetails);
+                if(response.isSuccessful()){
+                    ArrayList<DetailsTicket> detailsList = (ArrayList<DetailsTicket>) response.body();
 
-                lvDetailsTickets.setAdapter(adapter);
+                    for (DetailsTicket detailsTicket1 : detailsList){
+                        details.add(detailsTicket1);
+
+                    }
+                    lvDetailsTickets.setAdapter(adapter);
+
+                    calcularTotalAmoun();
+                }
+
             }
 
             @Override
-            public void onFailure(Call<List<DetailsTicket>> call, Throwable t) {
+            public void onFailure(Call call, Throwable t) {
 
             }
         });
@@ -118,7 +141,12 @@ public class DetailsTicket2 extends AppCompatActivity {
             startActivity(insert);
         });
 
-        btnBack2.setOnClickListener(v -> onBackPressed());
+        btnBack2.setOnClickListener(v -> {
+            Intent volver2 = new Intent(getApplicationContext(), MainActivity.class);
+            volver2.putExtra("ticket", ticket);
+            volver2.putExtra("detailsTickets", detailsTicket );
+            startActivity(volver2);
+        });
 
 
         lvDetailsTickets.setOnItemClickListener((parent, view, position, id) -> {
@@ -128,10 +156,43 @@ public class DetailsTicket2 extends AppCompatActivity {
 
             Intent intent = new Intent(getApplicationContext(), EditDetails.class);
             intent.putExtra("detailsTicket",selectedDetailsTicket);
+            intent.putExtra("ticket",ticket);
             startActivity(intent);
         });
 
-
-
     }
+
+
+    public void calcularTotalAmoun(){
+        double Amount = 0.0;
+
+        if(!details.isEmpty()){
+
+            for (DetailsTicket de : details){
+                Amount += de.getAmount();
+            }
+            ticket.setTotalAmount(Amount);
+            tvAmount.setText(ticket.getTotalAmount().toString());
+
+            Call updateAmount = apiService.updateTicket(ticket.getId(), ticket);
+
+            updateAmount.enqueue(new Callback() {
+                @Override
+                public void onResponse(Call call, Response response) {
+                    if (response.isSuccessful()){
+                        Toast.makeText(getApplicationContext(), "Precio total actualizado correctamente", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call call, Throwable t) {
+
+                }
+            });
+        }
+    }
+
+
 }
+
+

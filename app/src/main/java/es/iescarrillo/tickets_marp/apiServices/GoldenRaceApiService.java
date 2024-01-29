@@ -62,4 +62,7 @@ public interface GoldenRaceApiService {
     @PUT("api2/detailTicket/{id}")
     Call<DetailsTicket> updateDetail(@Path("id") int detailId, @Body DetailsTicket detailsTicket);
 
+
+
+
 }

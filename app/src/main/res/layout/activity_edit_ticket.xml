@@ -116,14 +116,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Volver" />
+                android:text="Volver"
+                android:backgroundTint="@color/azul"
+                />
 
             <Button
                 android:id="@+id/btnSave"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Save" />
+                android:text="Save"
+                android:backgroundTint="@color/azul"
+                />
         </LinearLayout>
 
     </LinearLayout>

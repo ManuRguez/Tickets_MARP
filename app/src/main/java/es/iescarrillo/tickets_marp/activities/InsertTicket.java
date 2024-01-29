@@ -24,6 +24,7 @@ public class InsertTicket extends AppCompatActivity {
 
     EditText etPrecio;
     Button  btnAdd,btnCancel;
+    DetailsTicket2 detailsTicket2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +40,7 @@ public class InsertTicket extends AppCompatActivity {
         Ticket ticket = new Ticket();
 
 
-        LocalDateTime now = LocalDateTime.now();
+         LocalDateTime now = LocalDateTime.now();
 
         String pattern = "dd/MM/yyyy HH:mm:ss";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
@@ -64,6 +65,7 @@ public class InsertTicket extends AppCompatActivity {
                     if(response.isSuccessful()){
                         Ticket createdTicket = response.body();
                         Log.i("Successfull ticket loaded", createdTicket.toString());
+                        Toast.makeText(getApplicationContext(), "Ticket creado correctamente", Toast.LENGTH_SHORT).show();
                     }else{
                         Log.i("Ticket Error", "Error to upload Ticket");
                     }
@@ -81,6 +83,7 @@ public class InsertTicket extends AppCompatActivity {
 
         btnCancel.setOnClickListener(v -> {
             Intent back2 = new Intent(getApplicationContext(), MainActivity.class);
+            back2.putExtra("ticket", ticket);
             startActivity(back2);
         });
 

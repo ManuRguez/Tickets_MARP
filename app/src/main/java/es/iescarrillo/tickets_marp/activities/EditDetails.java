@@ -31,6 +31,8 @@ public class EditDetails extends AppCompatActivity {
 
     Ticket ticket;
 
+    DetailsTicket2 detailsTicket2;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,11 @@ public class EditDetails extends AppCompatActivity {
         detailsTicket = new DetailsTicket();
         if(intent != null){
             detailsTicket = (DetailsTicket) intent.getSerializableExtra("detailsTicket");
+        }
+
+        ticket = new Ticket();
+        if(intent != null){
+            ticket = (Ticket) intent.getSerializableExtra("ticket");
         }
 
         btnSaveDetails = findViewById(R.id.btnSaveDetails);
@@ -56,7 +63,7 @@ public class EditDetails extends AppCompatActivity {
         etDescriptionDetails.setText((detailsTicket.getDescription().toString()));
         etAmountDetails.setText(String.valueOf(detailsTicket.getAmount()).toString());
 
-
+// newDetailsTicket.setAmount(Double.parseDouble(etPrecioDetails.getText().toString()));
 
 
         GoldenRaceApiService apiService = GoldenRaceApiClient.getClient().create(GoldenRaceApiService.class);
@@ -83,7 +90,8 @@ public class EditDetails extends AppCompatActivity {
                 }
             });
             Intent back = new Intent(getApplicationContext(), DetailsTicket2.class);
-            back.putExtra("Ticket",ticket);
+            back.putExtra("ticket",ticket);
+            back.putExtra("detailsTicket", detailsTicket);
             startActivity(back);
         });
 
@@ -98,8 +106,10 @@ public class EditDetails extends AppCompatActivity {
                 public void onResponse(Call<DetailsTicket> call, Response <DetailsTicket>response) {
                     if (response.isSuccessful()) {
                         DetailsTicket details = response.body();
-                        Log.i("Successful ticket loaded", details.toString());
                         Toast.makeText(getApplicationContext(), "Detalle eliminado correctamente", Toast.LENGTH_SHORT).show();
+
+                       // updateTotalAmount();
+
                     } else {
                         Log.i("Ticket Error", "Error al cargar el detalle del ticket");
                     }
@@ -110,6 +120,11 @@ public class EditDetails extends AppCompatActivity {
 
                 }
             });
+
+            Intent back22 = new Intent(getApplicationContext(), DetailsTicket2.class);
+            back22.putExtra("ticket",ticket);
+            back22.putExtra("detailsTicket", detailsTicket);
+            startActivity(back22);
 
 
 

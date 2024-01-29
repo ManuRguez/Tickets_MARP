@@ -23,6 +23,8 @@ public class EditTicket extends AppCompatActivity {
 
     Button btnBack,btnSave;
 
+    DetailsTicket2 detailsTicket2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
